@@ -586,6 +586,8 @@ namespace UnityEssentialsEditor
 				return !typeof(DecoratorAttribute).IsAssignableFrom(t)
 				       && attr.order >= minimumOrder
 				       && !exceptType.IsAssignableFrom(t)
+				       && t != typeof(HeaderAttribute)
+				       && t != typeof(SpaceAttribute)
 				       && t != typeof(TooltipAttribute);
 			}).OrderBy(a => a.order).ToArray();
 			if (attrs.Length > 0)
