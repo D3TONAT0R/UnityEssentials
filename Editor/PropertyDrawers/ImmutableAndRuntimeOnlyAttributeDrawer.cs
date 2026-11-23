@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace UnityEssentialsEditor.PropertyDrawers
 {
-	[CustomPropertyDrawer(typeof(InitOnlyAttribute), true)]
+	[CustomPropertyDrawer(typeof(ImmutableAttribute), true)]
 	[CustomPropertyDrawer(typeof(RuntimeOnlyAttribute), true)]
-	public class InitAndRuntimeOnlyAttributeDrawer : ModificationPropertyDrawer
+	public class ImmutableAndRuntimeOnlyAttributeDrawer : ModificationPropertyDrawer
 	{
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
@@ -27,9 +27,14 @@ namespace UnityEssentialsEditor.PropertyDrawers
 			var monoBehaviour = property.serializedObject.targetObject as MonoBehaviour;
 			if (monoBehaviour)
 			{
-				bool initialized = Application.isPlaying && monoBehaviour.gameObject.scene.IsValid();
-				if (attr is InitOnlyAttribute) return !initialized;
-				else if(attr is RuntimeOnlyAttribute) return initialized;
+				if (attr is ImmutableAttribute)
+				{
+					return !Application.isPlaying || !monoBehaviour.didStart;
+				}
+				else if(attr is RuntimeOnlyAttribute)
+				{
+					return Application.isPlaying;
+				}
 				else return false;
 			}
 			else
